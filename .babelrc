@@ -1,0 +1,13 @@
+{
+	"presets": ["env", "react", "es2015", "stage-0"],
+
+	"plugins": [
+ 		"syntax-dynamic-import",
+  		"transform-decorators-legacy",
+  		"transform-class-properties",
+  		"transform-regenerator",
+ 		"react-hot-loader/babel",
+ 		"transform-runtime",
+ 		["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }]
+ 	]
+}

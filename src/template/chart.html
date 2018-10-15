@@ -1,0 +1,74 @@
+<div>
+	<div class="data_count">数据统计</div>
+
+	<ul class="current_date_count">
+		<li><span>当日数据：</span></li>
+		<li><span class="font_h1">1</span><span>新增用户</span></li>
+		<li><span class="font_h1">2</span><span>创建文章</span></li>
+	</ul>
+	<ul class="all_count">
+		<li><span>总数据：</span></li>
+		<li><span class="font_h1">20</span><span>注册用户</span></li>
+		<li><span class="font_h1">50</span><span>文章</span></li>
+	</ul>
+</div>
+
+<div class="canvas">
+	<canvas id="charts"></canvas>
+</div>
+
+
+div,p,i,li,ul,header,article,span,a,form,input,h1,h2,h3,img,button,nav{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+} 
+ul{
+	list-style-type: none;
+}
+.data_count{
+	width: 100%;
+	text-align: center;
+}
+.current_date_count,.all_count{
+	display: block;
+	width: 600px;
+	height: 40px;
+	margin-bottom: 10px;
+}
+
+		.current_date_count li,.all_count li{
+			display: inline-block;
+			width: 30%;
+			height: 100%;
+			margin-right: 10px;
+			border-radius: 3px;
+			text-align: center;
+			line-height: 40px;
+		}
+		.current_date_count li, .all_count li{
+			color: #000;
+			background-color: #e5e9f2;
+			font-size: 15px;
+		}
+		.current_date_count li:nth-child(1){
+			color: #fff;
+			background-color: #ff9800;
+			font-size: 26px;
+		}
+
+		.all_count li:nth-child(1){
+			color: #fff;
+			background-color: rgb(54, 162, 235);
+			font-size: 24px;
+		}
+		.font_h1{
+			color: #333;
+			font-size: 26px;
+			margin-right: 3px;
+		}
+
+		.canvas{
+			width: 60%;
+			height: 400px;
+		}
