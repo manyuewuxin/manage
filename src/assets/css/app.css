@@ -161,6 +161,14 @@ a:hover{
 	margin-right: 3px;
 }
 
+.chart_type{
+	width: 80%;
+	text-align: right;
+	margin: 0 auto;
+}
+.chart_type span{
+	cursor: pointer;
+}
 .chart_canvas{
 	margin: 0 auto;
 	width: 85%;
