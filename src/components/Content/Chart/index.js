@@ -46,8 +46,8 @@ export default class Index extends Component {
     }
     render() {
         if (this.state.loading) return null;
-		const { chart, type } = this.state;
-		const labels = this.format();
+        const { chart, type } = this.state;
+        const labels = this.format();
         return (
             <div className="content">
                 <Breadcrumbs to={[{ "/": "首页" }]} />
@@ -105,15 +105,22 @@ export default class Index extends Component {
                         </span>
                     </Tooltip>
                 </div>
-				{type === "line" ? <Line chart={chart} labels={labels}/> : <Bar chart={chart} labels={labels}/> }
+                {type === "line" ? (
+                    <Line chart={chart} labels={labels} />
+                ) : (
+                    <Bar chart={chart} labels={labels} />
+                )}
             </div>
         );
     }
     componentDidMount() {
-        axios.get("/admin/chart").then(({ data }) => {
-            this.setState({ chart: data.chart, loading: false });
-        }).catch(({response}) => {
-            message.error(response.data.err);
-        });
+        axios
+            .get("/admin/chart")
+            .then(({ data }) => {
+                this.setState({ chart: data.chart, loading: false });
+            })
+            .catch(({ response }) => {
+                message.error(response.data.err);
+            });
     }
 }

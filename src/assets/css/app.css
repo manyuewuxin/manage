@@ -336,6 +336,7 @@ a:hover{
 .login .login_warning{
 	font-size: 13px;
 	color: red;
+	text-align: center;
 }
 
 /**********************************/
