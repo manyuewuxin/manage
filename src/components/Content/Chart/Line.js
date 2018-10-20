@@ -75,7 +75,7 @@ export default class Line extends Component {
                             },
                             ticks: {
                                 suggestedMin: 0,
-                                suggestedMax: max + 20
+                                suggestedMax: max + 30
                             }
                         }
                     ]

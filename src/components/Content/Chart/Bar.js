@@ -74,7 +74,7 @@ export default class Bar extends Component {
                             },
                             ticks: {
                                 suggestedMin: 0,
-                                suggestedMax: max + 20
+                                suggestedMax: max + 30
                             }
                         }
                     ]
