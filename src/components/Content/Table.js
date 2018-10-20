@@ -67,7 +67,6 @@ export default class Tabels extends Component {
         //拒绝
         e.stopPropagation();
         const index = Number(e.target.dataset.index);
-        console.log(index);
         const { table, page, filter } = this.state;
 
         axios.post("/admin/posts/reject", {
