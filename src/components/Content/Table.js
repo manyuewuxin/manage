@@ -33,103 +33,17 @@ export default class Tabels extends Component {
         this.no_modal = this.no_modal.bind(this);
         this.filter = this.filter.bind(this);
         this.index = null;
+        this.status = {
+            a: 0,
+            b: 1,
+            c: 2
+        };
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.location.pathname !== this.props.location.pathname) {
             this.setState({ update: true });
         }
-    }
-
-    reject(e) {
-        //拒绝
-        e.stopPropagation();
-        const index = Number(e.target.dataset.index - 1);
-
-        const { table, page } = this.state;
-        var page_index = page;
-        if (page - 1 > 0) page_index = table.length > 1 ? page : page - 1;
-
-        axios
-            .post("/admin/posts/reject", {
-                posts_id: table[index]._id,
-                state: table[index].state,
-                page: page_index
-            })
-            .then(({ data }) => {
-                this.setState({ table: data.table, page: page_index });
-            })
-            .catch(({ response }) => {
-                message.error(response.data.err);
-            });
-    }
-
-    resolve(e) {
-        //通过
-        e.stopPropagation();
-        const index = Number(e.target.dataset.index - 1);
-
-        const { table, page } = this.state;
-        var page_index = page;
-        if (page - 1 > 0) page_index = table.length > 1 ? page : page - 1;
-
-        axios
-            .post("/admin/posts/agree", {
-                posts_id: table[index]._id,
-                state: table[index].state,
-                page: page_index
-            })
-            .then(({ data }) => {
-                this.setState({ table: data.table, page: page_index });
-            })
-            .catch(({ response }) => {
-                message.error(response.data.err);
-            });
-    }
-
-    remove(e) {
-        e.stopPropagation();
-        this.index = Number(e.target.dataset.index - 1);
-        this.setState({
-            title: "删除文章",
-            text: "确定以管理员身份删除该文章？",
-            visible: true
-        });
-    }
-
-    ok_modal() {
-        //删除
-        if (typeof this.index === "number" && Number.isNaN(this.index) === false) {
-            const { table, page } = this.state;
-            var page_index = page;
-            if (page - 1 > 0) page_index = table.length > 1 ? page : page - 1;
-
-            axios
-                .post("/admin/posts/remove", {
-                    posts_id: table[this.index]._id,
-                    state: table[this.index].state,
-                    page: page_index
-                })
-                .then(({ data }) => {
-                    this.setState({
-                        table: data.table,
-                        page: page_index,
-                        visible: false,
-                        title: null,
-                        text: null
-                    });
-                })
-                .catch(({ response }) => {
-                    message.error(response.data.err);
-                });
-        } else {
-            message.error("操作异常");
-        }
-    }
-
-    no_modal() {
-        this.index = null;
-        this.setState({ title: null, text: null, visible: false });
     }
 
     getTable(path, page, state = 2) {
@@ -149,6 +63,101 @@ export default class Tabels extends Component {
             });
     }
 
+    reject(e) {
+        //拒绝
+        e.stopPropagation();
+        const index = Number(e.target.dataset.index);
+        console.log(index);
+        const { table, page, filter } = this.state;
+
+        axios.post("/admin/posts/reject", {
+            posts_id: table[index]._id, 
+            state: table[index].state 
+        }).then(() => {
+            if(table.length-1 > 0){
+                table.splice(index,1);
+                this.setState({ table });
+            }
+            else{
+                const pages = page-1 > 0 ? page-1 : 1;
+                const state = this.status[filter[0]];
+                this.getTable("posts", pages, state);
+            }
+        }).catch(({ response }) => {
+            message.error(response.data.err);
+        });
+    }
+
+    resolve(e) {
+        //通过
+        e.stopPropagation();
+        const index = Number(e.target.dataset.index);
+
+        const { table, page, filter } = this.state;
+
+        axios.post("/admin/posts/agree", {
+                posts_id: table[index]._id,
+                state: table[index].state
+            }).then(() => {
+                if(table.length-1 > 0){
+                    table.splice(index,1);
+                    this.setState({ table });
+                }
+                else{
+                    const pages = page-1 > 0 ? page-1 : 1;
+                    const state = this.status[filter[0]];
+                    this.getTable("posts", pages, state);
+                }
+            }).catch(({ response }) => {
+                message.error(response.data.err);
+            });
+    }
+
+    remove(e) {
+        e.stopPropagation();
+        this.index = Number(e.target.dataset.index);
+        this.setState({
+            title: "删除文章",
+            text: "确定以管理员身份删除该文章？",
+            visible: true
+        });
+    }
+
+    ok_modal() {
+        //删除
+        if (typeof this.index === "number" && Number.isNaN(this.index) === false) {
+            const index = this.index;
+            const { table, page, filter } = this.state;
+
+            axios.post("/admin/posts/remove", {
+                    posts_id: table[index]._id,
+                    state: table[index].state
+                }).then(() => {
+                    if(table.length-1 > 0){
+                        table.splice(index,1);
+                        this.setState({ table: table, visible: false, title: null, text: null });
+                    }
+
+                    else{
+                        const pages = page-1 > 0 ? page-1 : 1;
+                        const state = this.status[filter[0]];
+                        this.setState({ visible: false, title: null, text: null });
+                        this.getTable("posts", pages, state);
+                    }
+                }).catch(({ response }) => {
+                    message.error(response.data.err);
+                });
+        } 
+        else {
+            message.error("操作异常");
+        }
+    }
+
+    no_modal() {
+        this.index = null;
+        this.setState({ title: null, text: null, visible: false });
+    }
+
     setPage(page) {
         if (this.state.page !== page) {
             const obj = { a: 0, b: 1, c: 2 };
@@ -160,23 +169,19 @@ export default class Tabels extends Component {
 
     filter(pagination, filter, sort) {
         if (this.state.filter[0] !== filter.state[0]) {
-            const obj = { a: 0, b: 1, c: 2 };
-            const state = obj[filter.state[0]];
-            axios
-                .get(`/admin/table/posts?page=1&state=${state}`)
-                .then(({ data }) => {
-                    this.setState({
-                        table: data.table,
-                        count: data.count,
-                        page: 1,
-                        filter: filter.state,
-                        loading: false,
-                        update: false
-                    });
-                })
-                .catch(({ response }) => {
-                    message.error(response.data.err);
+            const state = this.status[filter.state[0]];
+            axios.get(`/admin/table/posts?page=1&state=${state}`).then(({ data }) => {
+                this.setState({
+                    table: data.table,
+                    count: data.count,
+                    page: 1,
+                    filter: filter.state,
+                    loading: false,
+                    update: false
                 });
+            }).catch(({ response }) => {
+                message.error(response.data.err);
+            });
         }
     }
 
@@ -254,29 +259,28 @@ export default class Tabels extends Component {
                     { text: "已拒绝", value: "b" },
                     { text: "已通过", value: "c" }
                 ],
-                onFilter: function(value, record) {
-                    const obj = { a: 0, b: 1, c: 2 };
-                    return record.state === obj[value];
+                onFilter: (value, record) => {
+                    return record.state === this.status[value];
                 },
-                render: function(state) {
+                render: (state) => {
                     switch (state) {
                         case 0:
                             return (
-                                <Tag color="blue" key="state0">
+                                <Tag color="blue" key={"abcd"}>
                                     待审核
                                 </Tag>
                             );
 
                         case 1:
                             return (
-                                <Tag color="red" key="state1">
+                                <Tag color="red" key={"dses"}>
                                     已拒绝
                                 </Tag>
                             );
 
                         case 2:
                             return (
-                                <Tag color="green" key="state2">
+                                <Tag color="green" key={"esdw"}>
                                     已通过
                                 </Tag>
                             );
@@ -286,24 +290,24 @@ export default class Tabels extends Component {
             {
                 title: "操作",
                 key: "action",
-                render: (text, data) => {
+                render: (text, data, index) => {
                     return (
                         <div>
-                            <Tag color="volcano" key={"taga"}>
-                                <span onClick={this.remove} data-index={data.index}>
+                            <Tag color="volcano" key="dser">
+                                <span onClick={this.remove} data-index={index}>
                                     删除
                                 </span>
                             </Tag>
                             <Tag
                                 color="#ea6f5a"
                                 visible={data.state === 0 || data.state == 2}
-                                key={"tagb"}>
-                                <span onClick={this.reject} data-index={data.index}>
+                                key="wfrw">
+                                <span onClick={this.reject} data-index={index}>
                                     拒绝
                                 </span>
                             </Tag>
-                            <Tag color="#2db7f5" visible={data.state !== 2} key={"tagc"}>
-                                <span onClick={this.resolve} data-index={data.index}>
+                            <Tag color="#2db7f5" visible={data.state !== 2} key="wsde">
+                                <span onClick={this.resolve} data-index={index}>
                                     通过
                                 </span>
                             </Tag>
